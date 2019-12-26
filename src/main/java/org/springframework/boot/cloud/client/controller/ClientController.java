@@ -2,7 +2,12 @@ package org.springframework.boot.cloud.client.controller;
 
 import lombok.extern.log4j.Log4j2;
 import net.sf.json.JSONObject;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
 
 
 /**
@@ -38,5 +43,18 @@ public class ClientController {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("findByPathId", id);
         return jsonObject;
+    }
+
+    @PostMapping("upload")
+    public Object upload(@RequestParam(value="file")MultipartFile file) {
+        try {
+            byte[] in = file.getBytes();
+            File out = new File(file.getOriginalFilename());
+            FileCopyUtils.copy(in, out);
+            return out.getAbsolutePath();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
